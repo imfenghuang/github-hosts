@@ -1,0 +1,45 @@
+name: github-hosts-action
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: node src/index.js
+    
+    - name: Commit
+      id: commit
+      run: |
+        git config --local user.email "action-bot@users.noreply.github.com"
+        git config --local user.name "action-bot"
+        git add "HOSTS"
+        git add "README.md"
+        git commit -m "ci: update"
+      continue-on-error: true
+      
+    - name: Check on failures
+      if: steps.commit.outputs.status == 'failure'
+      run: exit 1
+      
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.FOR_GITHUB_HOSTS }}
