@@ -1,6 +1,6 @@
 ## Github HOSTS
 
-获取 `github` 相关域名对应的 `ipv4` 地址，作用于 `hosts` 文件
+获取 `github` 相关域名对应的 `ipv4` 地址，作用于 `hosts` 文件。每日更新。
 
 <!-- github hosts start -->
 ```bash
